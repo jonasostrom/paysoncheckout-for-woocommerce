@@ -5,7 +5,9 @@
 	var wc_paysoncheckout_loaded = false;
 
 	var wc_paysoncheckout_body_class = function wc_paysoncheckout_body_class() {
+			console.log('body class hit');
 		if ("paysoncheckout" === $("input[name='payment_method']:checked").val()) {
+			console.log('paysoncheckout selected');
 			$("body").addClass("paysoncheckout-selected").removeClass("paysoncheckout-deselected");
 		} else {
 			$("body").removeClass("paysoncheckout-selected").addClass("paysoncheckout-deselected");
@@ -66,9 +68,12 @@
 	// When checkout gets updated
 	$(document.body).on("updated_checkout", function (event, data) {
 		if ("paysoncheckout" === $("input[name='payment_method']:checked").val()) {
+			wc_paysoncheckout_get_iframe();
 			// Remove the "choose another payment method" and Payson container to prevent duplication
 			$('form.woocommerce-checkout .paysoncheckout-pay-choose-other').remove();
-			$('div#customer_details_payson').remove();
+			//$('div#customer_details_payson').remove();
+			//$('div#customer_details_payson').fadeOut(300,function(){ $(this).remove(); });
+			
 
 			// Move order review table
 			$('table.woocommerce-checkout-review-order-table').addClass('paysoncheckout-cart').detach().appendTo('form.woocommerce-checkout');
@@ -82,10 +87,11 @@
 					$('<p><a href="#" class="button">' + wc_paysoncheckout.select_another_method_text + '</a></p>').appendTo('form.woocommerce-checkout').addClass('paysoncheckout-choose-other');
 				}
 			}
+			$('div#customer_details_payson').fadeOut(600,function(){ $(this).remove(); });
+			$('form.woocommerce-checkout').append('<div id="customer_details_payson"></div>').fadeIn(100);
 
-			$('form.woocommerce-checkout').append('<div id="customer_details_payson"></div>');
-
-			wc_paysoncheckout_get_iframe();
+			//wc_paysoncheckout_get_iframe();
+			return false;
 		}
 
 		wc_paysoncheckout_body_class();

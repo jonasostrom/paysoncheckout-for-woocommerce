@@ -57,6 +57,8 @@ function init_wc_gateway_paysoncheckout_class() {
 
 			// Actions.
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+			
+			add_action( 'woocommerce_before_checkout_form', array( $this, 'get_paysoncheckout_iframe' ) );
 
 			// Scripts.
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -116,7 +118,29 @@ function init_wc_gateway_paysoncheckout_class() {
 
 			return apply_filters( 'wc_payson_icon_html', $icon_html );
 		}
-
+		
+		/*
+		 * Retrieve and print the PaysonCheckout iframe.
+		 */
+		public function get_paysoncheckout_iframe() {
+	
+			$wc_order = new WC_PaysonCheckout_WC_Order();
+			$order_id = $wc_order->update_or_create_local_order();
+	
+			include_once( PAYSONCHECKOUT_PATH . '/includes/class-wc-paysoncheckout-setup-payson-api.php' );
+			$payson_api = new WC_PaysonCheckout_Setup_Payson_API();
+			$checkout   = $payson_api->get_checkout( $order_id );
+	
+			$iframe = '<div class="paysoncheckout-container" style="width:100%;  margin-left:auto; margin-right:auto;">';
+			if ( is_wp_error( $checkout ) ) {
+				$iframe .= $checkout->get_error_message();
+			} else {
+				$iframe .= $checkout->snippet;
+			}
+			$iframe .= '</div>';
+			echo $iframe;
+		}
+	
 		/**
 		 * Remove thank you page order received text if PaysonCheckout is the selected payment method.
 		 *

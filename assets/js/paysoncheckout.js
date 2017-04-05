@@ -44,7 +44,7 @@
 		if ("paysoncheckout" === $("input[name='payment_method']:checked").val()) {
 			// Get iframe if not fetched yet
 			if (!wc_paysoncheckout_loaded) {
-				wc_paysoncheckout_get_iframe();
+				//wc_paysoncheckout_get_iframe();
 			}
 		}
 	});
@@ -84,6 +84,8 @@
 			}
 
 			$('form.woocommerce-checkout').append('<div id="customer_details_payson"></div>');
+			$('.paysoncheckout-container').appendTo('#customer_details_payson');
+			
 
 			wc_paysoncheckout_get_iframe();
 		}
